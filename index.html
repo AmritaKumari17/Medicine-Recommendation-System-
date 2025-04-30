@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medicine Recommendation System</title>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: rgb(202, 234, 202);
+    background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+}
+
+.header {
+    background-color: #043f25;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* For a fallback icon if image doesn't load */
+.logo-icon {
+    display: none;
+    font-size: 24px;
+    color: white;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.about-system {
+    background-color:rgba(212, 255, 194, 0.894);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.about-system h2 {
+    margin-bottom: 15px;
+    color: #048110;
+}
+
+.about-system p {
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.read-more-btn {
+    background-color: #3d8341b3;
+    color: rgb(1, 57, 30);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.read-more-btn:hover {
+    background-color: #7ad693;
+}
+
+.feature-cards {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.feature-card {
+    flex: 1;
+    min-width: 300px;
+    background-color: rgba(212, 255, 194, 0.894);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-height: 600px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.search-form h3 {
+    color: #206428;
+    margin-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #03a125;
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    background-color: #022a12a7;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #219653;
+}
+
+.placeholder-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    height: 100%;
+    min-height: 300px;
+}
+
+.placeholder-image {
+    margin-bottom: 20px;
+}
+
+.placeholder-text {
+    color: #0b8c09;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.medicine-info h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.medicine-name {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    border-bottom: 3px solid #04310a;
+    color: #04310a;
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+    padding: 10px;
+    line-height: 1.6;
+    max-height: 300px;
+    overflow-y: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.not-found {
+    text-align: center;
+    padding: 20px;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.add-medicine-btn {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+.add-medicine-btn:hover {
+    background-color: #d35400;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-btn {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+.modal-body {
+    line-height: 1.6;
+    color: #555;
+}
+
+.add-medicine-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.file-upload {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.file-upload label {
+    font-weight: bold;
+    color: #555;
+}
+
+.status-msg {
+    color: #27ae60;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+}
+.footer {
+    background-color: #043f25;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-links {
+    margin-top: 10px;
+}
+
+.footer-links a {
+    color: #ecf0f1;
+    margin: 0 10px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #3498db;
+}
+
+/* Medicine Tab Read More Button Styles */
+.tab-read-more-btn {
+    background-color: #3d8341b3;
+    color: rgb(1, 57, 30);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.tab-read-more-btn:hover {
+    background-color: #7ad693;
+}
+
+.content-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Read More Popup Modal */
+.detail-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.detail-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+</style>
+</head>
+<body>
+<header class="header">
+<div class="logo">
+    <!-- SVG logo for medicine -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="white">
+        <path d="M19,6h-4a1,1,0,0,0-1,1v4H10V7A1,1,0,0,0,9,6H5A1,1,0,0,0,4,7V17a1,1,0,0,0,1,1H9a1,1,0,0,0,1-1V13h4v4a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V7A1,1,0,0,0,19,6ZM8,16H6V8H8Zm10,0H16V8h2Z"/>
+    </svg>
+    <!-- Fallback text icon if SVG doesn't work -->
+    <span class="logo-icon">💊</span>
+</div>
+<div class="title">MediSuggest</div>
+</header>
+
+<div class="container">
+<div class="about-system">
+    <h2>About Our System</h2>
+    <p>The Medicine Recommendation System is designed to provide comprehensive information about various medications. Simply enter the name of a medicine to access details about its category, overview, usage instructions, dosage recommendations, and potential side effects.</p>
+    <button class="read-more-btn" id="readMoreBtn">Read More</button>
+</div>
+
+<div class="feature-cards">
+    <div class="feature-card">
+        <div class="search-form">
+            <h3 style="text-align: center;">Find Medicine's Information</h3>
+            <div class="input-group">
+                <label for="medicineName">Enter Medicine Name:</label>
+                <br>
+                <input type="text" id="medicineName" placeholder="e.g., Paracetamol">
+            </div>
+            <button class="submit-btn" id="searchBtn">Search</button>
+        </div>
+        
+        <div class="status-msg" id="databaseStatus">
+            Database loaded and ready to use.
+        </div>
+    </div>
+    
+    <div class="feature-card">
+        <div class="placeholder-content" id="placeholderContent">
+        <!-- Animated Scanning SVG -->
+<div style="text-align: center; margin: 20px 0;">
+    <svg width="250" height="250" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Pill -->
+      <g transform="translate(20,40)">
+        <g>
+          <rect x="0" y="0" width="40" height="20" rx="10" ry="10" fill="#4caf50">
+            <animateTransform attributeName="transform"
+                              type="rotate"
+                              values="0 20 10;3 20 10;-3 20 10;0 20 10"
+                              dur="2s"
+                              repeatCount="indefinite" />
+          </rect>
+          <line x1="20" y1="0" x2="20" y2="20" stroke="white" stroke-width="2" />
+        </g>
+      </g>
+  
+      <!-- Magnifying glass -->
+      <g>
+        <circle id="lens" r="10" fill="none" stroke="#333" stroke-width="2">
+          <animateTransform attributeName="transform"
+                            type="translate"
+                            values="60 40; 65 40; 60 40"
+                            dur="2s"
+                            repeatCount="indefinite" />
+        </circle>
+        <line x1="6" y1="6" x2="12" y2="12" stroke="#333" stroke-width="2">
+          <animateTransform attributeName="transform"
+                            type="translate"
+                            values="60 40; 65 40; 60 40"
+                            dur="2s"
+                            repeatCount="indefinite" />
+        </line>
+      </g>
+    </svg>
+  </div>
+  
+  
+  
+            <p class="placeholder-text">Search for a medicine to view its information</p>
+        </div>
+        
+        <div class="medicine-info" id="medicineInfo" style="display: none;">
+            <div class="medicine-name" id="displayMedicineName"></div>
+            <div class="tabs" id="infoTabs"></div>
+            <div class="tab-contents" id="tabContents"></div>
+        </div>
+        
+        <div class="not-found" id="notFound" style="display: none;">
+            <br>
+            <p>Medicine not found. Please check your spelling or try another medicine.</p>
+            <button class="add-medicine-btn" id="addMedicineBtn">Add</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Read More Modal -->
+<div class="modal" id="readMoreModal">
+<div class="modal-content">
+    <span class="close-btn" id="closeReadMoreModal">&times;</span>
+    <h2 style="text-align: center;" class="modal-title"><u>More About the System</u></h2>
+    <div class="modal-body">
+        <p>This  Medicine Recommendation System, <b>MediSuggest</b> is a robust and user-centric platform designed to deliver accurate, comprehensive, and accessible information on a wide range of medications. Developed with the goal of empowering users to make informed healthcare decisions, the system serves as a reliable reference tool for essential drug-related knowledge.</p>
+        <br><p><b>Key features</b> of our system include:</p>
+        <ul><br>
+            <li style="padding-left: 20px;">Quick access to essential medication information</li>
+            <li style="padding-left: 20px;">Detailed insights about drug categories,usage,dosage,and side effects</li>
+            <li style="padding-left: 20px;">User-friendly interface for easy navigation</li>
+            <li style="padding-left: 20px;">Ability to add new medications to the database</li>
+        </ul>
+        <br>
+        <p>This system is intended for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Users are strongly advised to consult a <b>licensed healthcare</b> provider for any medical concerns or before starting any medication.</p>
+    </div>
+</div>
+</div>
+
+<!-- Add Medicine Modal -->
+<div class="modal" id="addMedicineModal">
+<div class="modal-content">
+    <span class="close-btn" id="closeAddMedicineModal">&times;</span>
+    <h2 class="modal-title">New Medicine</h2>
+    <div class="modal-body">
+        <p>Please provide the Name of the medicine you'd like to add to our database:</p>
+        <div class="add-medicine-form">
+            <div class="input-group">
+                <label for="newMedicineName">Medicine Name:</label>
+                <input type="text" id="newMedicineName">
+            </div>
+           
+            <button class="submit-btn" id="saveNewMedicineBtn">Save</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Detail Modal for Read More in Medicine Tabs -->
+<div class="detail-modal" id="detailModal">
+<div class="detail-modal-content">
+    <span class="close-btn" id="closeDetailModal">&times;</span>
+    <h2 class="modal-title" id="detailTitle">Medicine Details</h2>
+    <div class="modal-body" id="detailContent">
+        <!-- Content will be populated dynamically -->
+    </div>
+</div>
+</div>
+
+<footer class="footer">
+    <div class="footer-container">
+      <p>&copy; 2025 Medicine Recommendation System. All rights reserved.</p>
+      
+    </div>
+  </footer>  
+  <script>
+    let medicineData = [];
+    let notFoundAttempt = 0;
+    let lastSearched = '';
+    
+    const searchBtn = document.getElementById('searchBtn');
+    const medicineNameInput = document.getElementById('medicineName');
+    const placeholderContent = document.getElementById('placeholderContent');
+    const medicineInfo = document.getElementById('medicineInfo');
+    const displayMedicineName = document.getElementById('displayMedicineName');
+    const infoTabs = document.getElementById('infoTabs');
+    const tabContents = document.getElementById('tabContents');
+    const notFound = document.getElementById('notFound');
+    const addMedicineBtn = document.getElementById('addMedicineBtn');
+    const addMedicineModal = document.getElementById('addMedicineModal');
+    const newMedicineName = document.getElementById('newMedicineName');
+    const saveNewMedicineBtn = document.getElementById('saveNewMedicineBtn');
+    const readMoreModal = document.getElementById('readMoreModal');
+    const readMoreBtn = document.getElementById('readMoreBtn');
+    const closeReadMoreModal = document.getElementById('closeReadMoreModal');
+    const detailModal = document.getElementById('detailModal');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailContent = document.getElementById('detailContent');
+    const closeDetailModal = document.getElementById('closeDetailModal');
+    
+    // Reset counter if user changes the input
+    medicineNameInput.addEventListener('input', () => {
+        if (medicineNameInput.value.trim().toLowerCase() !== lastSearched) {
+            notFoundAttempt = 0;
+            document.getElementById('addMedicineBtn').style.display = 'none';
+        }
+    });
+    
+    searchBtn.addEventListener('click', searchMedicine);
+    
+    document.getElementById('closeAddMedicineModal').onclick = () => {
+        addMedicineModal.style.display = 'none';
+    };
+    
+    addMedicineBtn.onclick = () => {
+        newMedicineName.value = medicineNameInput.value;
+        addMedicineModal.style.display = 'flex';
+    };
+    
+    saveNewMedicineBtn.onclick = () => {
+        const newEntry = {
+            Drug_Name: newMedicineName.value.trim(),
+            Category: document.getElementById('newMedicineCategory').value.trim(),
+            Overview: document.getElementById('newMedicineOverview').value.trim(),
+            Usage: document.getElementById('newMedicineUsage').value.trim(),
+            Dosage: document.getElementById('newMedicineDosage').value.trim(),
+            Side_Effects: document.getElementById('newMedicineSideEffects').value.trim(),
+            Extended_Info: document.getElementById('newMedicineExtendedInfo')?.value.trim() || ''
+        };
+        medicineData.push(newEntry);
+        alert(`"${newEntry.Drug_Name}" added to the database.`);
+        addMedicineModal.style.display = 'none';
+        displayMedicineInfo(newEntry);
+        placeholderContent.style.display = 'none';
+        medicineInfo.style.display = 'block';
+        notFound.style.display = 'none';
+    };
+    
+    readMoreBtn.onclick = () => {
+        readMoreModal.style.display = 'flex';
+    };
+    
+    closeReadMoreModal.onclick = () => {
+        readMoreModal.style.display = 'none';
+    };
+    
+    closeDetailModal.onclick = () => {
+        detailModal.style.display = 'none';
+    };
+    
+    window.onclick = (event) => {
+        if (event.target === readMoreModal) readMoreModal.style.display = 'none';
+        if (event.target === detailModal) detailModal.style.display = 'none';
+        if (event.target === addMedicineModal) addMedicineModal.style.display = 'none';
+    };
+    
+    function searchMedicine() {
+        const query = medicineNameInput.value.trim().toLowerCase();
+        if (!query) return alert("Please enter a medicine name");
+    
+        const match = medicineData.find(item =>
+            item.Drug_Name && item.Drug_Name.toLowerCase() === query
+        );
+    
+        if (match) {
+            displayMedicineInfo(match);
+            placeholderContent.style.display = 'none';
+            medicineInfo.style.display = 'block';
+            notFound.style.display = 'none';
+            notFoundAttempt = 0;
+            lastSearched = query;
+        } else {
+            placeholderContent.style.display = 'none';
+            medicineInfo.style.display = 'none';
+    
+            if (query !== lastSearched) {
+                notFoundAttempt = 1;
+                lastSearched = query;
+                notFound.querySelector('p').textContent = "Medicine not found. Check spelling and try again.";
+                document.getElementById('addMedicineBtn').style.display = 'none';
+            } else {
+                notFoundAttempt++;
+                notFound.querySelector('p').textContent = "No info found. Click below to add this medicine.";
+                document.getElementById('addMedicineBtn').style.display = 'inline-block';
+            }
+    
+            notFound.style.display = 'block';
+        }
+    }
+    
+    function displayMedicineInfo(medicine) {
+        infoTabs.innerHTML = '';
+        tabContents.innerHTML = '';
+        displayMedicineName.textContent = medicine.Drug_Name || "Medicine";
+    
+        const fields = {
+            Category: medicine.Category,
+            Overview: medicine.Overview,
+            Usage: medicine.Usage,
+            Dosage: medicine.Dosage,
+            'Side Effects': medicine.Side_Effects
+        };
+    
+        let activeSet = false;
+        for (const [label, value] of Object.entries(fields)) {
+            if (value && value.trim()) {
+                const tab = document.createElement('div');
+                tab.className = 'tab';
+                tab.textContent = label;
+                tab.dataset.tab = label;
+                if (!activeSet) {
+                    tab.classList.add('active');
+                    activeSet = true;
+                }
+                infoTabs.appendChild(tab);
+    
+                const content = document.createElement('div');
+                content.className = 'tab-content';
+                content.dataset.content = label;
+    
+                const contentContainer = document.createElement('div');
+                contentContainer.className = 'content-container';
+    
+                const textContent = document.createElement('p');
+                textContent.textContent = value;
+                contentContainer.appendChild(textContent);
+    
+                if (value.length > 150 || (medicine.Extended_Info && medicine.Extended_Info.trim())) {
+                    const readMoreBtn = document.createElement('button');
+                    readMoreBtn.className = 'tab-read-more-btn';
+                    readMoreBtn.textContent = 'Read More';
+                    readMoreBtn.onclick = () => {
+                        detailTitle.textContent = `${medicine.Drug_Name} - ${label}`;
+                        let fullContent = value;
+                        if (medicine.Extended_Info && medicine.Extended_Info.trim()) {
+                            fullContent = medicine.Extended_Info;
+                        }
+                        detailContent.innerHTML = `<p>${fullContent}</p>`;
+                        detailModal.style.display = 'flex';
+                    };
+                    contentContainer.appendChild(readMoreBtn);
+                }
+    
+                content.appendChild(contentContainer);
+    
+                if (tab.classList.contains('active')) content.classList.add('active');
+                tabContents.appendChild(content);
+    
+                tab.onclick = () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    content.classList.add('active');
+                };
+            }
+        }
+    
+        if (!activeSet) {
+            const message = document.createElement('p');
+            message.textContent = "No details available for this medicine.";
+            tabContents.appendChild(message);
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('medicine.xlsx')
+            .then(res => res.arrayBuffer())
+            .then(data => {
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                medicineData = XLSX.utils.sheet_to_json(sheet);
+                document.getElementById('databaseStatus').textContent = '';
+            })
+            .catch(err => {
+                console.error("Failed to load Excel:", err);
+                document.getElementById('databaseStatus').textContent = 'failed';
+            });
+    });
+    
+    document.querySelectorAll('.footer-links a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+    </script>
+    
+    
+</body>
+</html>
