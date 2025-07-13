@@ -634,7 +634,7 @@ function importDatabase() {
                 processData();
                 updateStats();
                 populateCategoryFilter();
-                displayAllMedicines();
+                displayEmptyState();
                 
                 showToast(`Imported ${newMedicines.length} new medicines!`, 'success');
             } catch (error) {
