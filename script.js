@@ -145,17 +145,8 @@ function handleNavigation(e) {
 // Load Medicine Data
 async function loadMedicineData() {
     try {
-        // Try to load from Excel file first
-        const response = await fetch('medicine.xlsx');
-        if (response.ok) {
-            const arrayBuffer = await response.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            medicineData = XLSX.utils.sheet_to_json(worksheet);
-        } else {
-            // Fallback to sample data if Excel file not found
-            medicineData = getSampleMedicineData();
-        }
+        // Use sample data as primary source
+        medicineData = getSampleMedicineData();
         
         // Process and display data
         processData();
@@ -163,7 +154,7 @@ async function loadMedicineData() {
         populateCategoryFilter();
         displayAllMedicines();
         
-        showToast('Database loaded successfully!', 'success');
+        showToast('Sample database loaded. Upload your Excel file to add more medicines.', 'info');
     } catch (error) {
         console.error('Error loading medicine data:', error);
         medicineData = getSampleMedicineData();
@@ -172,7 +163,7 @@ async function loadMedicineData() {
         populateCategoryFilter();
         displayAllMedicines();
         
-        showToast('Using sample data. Upload your own database for full functionality.', 'warning');
+        showToast('Sample data loaded. Upload your Excel file for full database.', 'info');
     }
 }
 
@@ -218,6 +209,46 @@ function getSampleMedicineData() {
             Usage: "Used to treat type 2 diabetes, often combined with diet and exercise. May also be used for PCOS treatment.",
             Dosage: "Starting dose: 500mg twice daily with meals. May increase gradually to maximum 2000-2500mg daily.",
             Side_Effects: "Nausea, diarrhea, stomach upset, metallic taste. Rare but serious: lactic acidosis. Regular monitoring required."
+        }
+        {
+            Drug_Name: "Lignocaine HCl injection I.P 1%",
+            Category: "Anaesthetics",
+            Overview: "Local anesthetic used to numb tissues during minor surgeries or procedures.",
+            Usage: "Administered by healthcare professionals for local anesthesia during medical procedures.",
+            Dosage: "Dosage varies based on procedure and patient weight. Maximum safe dose is 4.5mg/kg body weight.",
+            Side_Effects: "Local reactions at injection site, allergic reactions, systemic toxicity if overdosed."
+        },
+        {
+            Drug_Name: "Cetirizine",
+            Category: "Antihistamine",
+            Overview: "Second-generation antihistamine used to treat allergic reactions and hay fever.",
+            Usage: "Take once daily for seasonal allergies, hives, and allergic rhinitis.",
+            Dosage: "Adults: 10mg once daily. Children 6-12 years: 5-10mg once daily.",
+            Side_Effects: "Drowsiness, dry mouth, fatigue, dizziness. Less sedating than first-generation antihistamines."
+        },
+        {
+            Drug_Name: "Omeprazole",
+            Category: "Proton Pump Inhibitor",
+            Overview: "Reduces stomach acid production to treat acid reflux, ulcers, and GERD.",
+            Usage: "Take before meals, preferably in the morning. Used for acid-related stomach conditions.",
+            Dosage: "Adults: 20-40mg once daily. Treatment duration varies by condition.",
+            Side_Effects: "Headache, nausea, diarrhea, stomach pain. Long-term use may affect nutrient absorption."
+        },
+        {
+            Drug_Name: "Atorvastatin",
+            Category: "Statin",
+            Overview: "Cholesterol-lowering medication that reduces risk of heart disease and stroke.",
+            Usage: "Take once daily, with or without food. Used to lower cholesterol and prevent cardiovascular events.",
+            Dosage: "Starting dose: 10-20mg daily. May increase to maximum 80mg daily based on response.",
+            Side_Effects: "Muscle pain, liver enzyme elevation, digestive issues. Regular monitoring required."
+        },
+        {
+            Drug_Name: "Salbutamol",
+            Category: "Bronchodilator",
+            Overview: "Fast-acting bronchodilator used to treat asthma and COPD symptoms.",
+            Usage: "Inhaled medication for quick relief of breathing difficulties and bronchospasm.",
+            Dosage: "2 puffs every 4-6 hours as needed. Maximum 8 puffs in 24 hours.",
+            Side_Effects: "Tremor, increased heart rate, headache, muscle cramps. Overuse can worsen asthma."
         }
     ];
 }
@@ -615,6 +646,8 @@ function importDatabase() {
         const file = e.target.files[0];
         if (!file) return;
         
+        showToast('Processing file...', 'info');
+        
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
@@ -623,6 +656,11 @@ function importDatabase() {
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const importedData = XLSX.utils.sheet_to_json(worksheet);
                 
+                if (importedData.length === 0) {
+                    showToast('No data found in the file. Please check the file format.', 'error');
+                    return;
+                }
+                
                 // Merge with existing data
                 const newMedicines = importedData.filter(imported => 
                     !medicineData.some(existing => 
@@ -630,14 +668,25 @@ function importDatabase() {
                     )
                 );
                 
-                medicineData.push(...newMedicines);
+                if (newMedicines.length > 0) {
+                    medicineData.push(...newMedicines);
+                } else {
+                    // If no new medicines, replace existing data
+                    medicineData = [...importedData];
+                }
+                
                 processData();
                 updateStats();
                 populateCategoryFilter();
                 displayEmptyState();
                 
-                showToast(`Imported ${newMedicines.length} new medicines!`, 'success');
+                if (newMedicines.length > 0) {
+                    showToast(`Successfully imported ${newMedicines.length} new medicines!`, 'success');
+                } else {
+                    showToast(`Successfully loaded ${importedData.length} medicines from file!`, 'success');
+                }
             } catch (error) {
+                console.error('Import error:', error);
                 showToast('Error importing file. Please check the format.', 'error');
             }
         };
