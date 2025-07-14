@@ -209,7 +209,7 @@ function getSampleMedicineData() {
             Usage: "Used to treat type 2 diabetes, often combined with diet and exercise. May also be used for PCOS treatment.",
             Dosage: "Starting dose: 500mg twice daily with meals. May increase gradually to maximum 2000-2500mg daily.",
             Side_Effects: "Nausea, diarrhea, stomach upset, metallic taste. Rare but serious: lactic acidosis. Regular monitoring required."
-        }
+        },
         {
             Drug_Name: "Lignocaine HCl injection I.P 1%",
             Category: "Anaesthetics",
