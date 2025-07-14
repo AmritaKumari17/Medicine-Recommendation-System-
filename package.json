@@ -4,8 +4,7 @@
   "description": "Advanced Medicine Recommendation System",
   "main": "script.js",
   "scripts": {
-    "start": "node server.js"
-    "start": "http-server .",
+    "start": "node server.js",
     "build": "echo 'No build process needed for static files'"
   },
   "keywords": ["medicine", "healthcare", "recommendation", "database"],
