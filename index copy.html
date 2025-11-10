@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSuggest - Advanced Medicine Recommendation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Loading MediSuggest</h2>
+            <p>Preparing your medicine database...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <span class="brand-text">MediSuggest</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#search" class="nav-link">Search</a>
+                <a href="#database" class="nav-link">Database</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="hero-particles"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="gradient-text">MediSuggest</span>
+                    <br>Advanced Medicine Information System
+                </h1>
+                <p class="hero-subtitle">
+                    Comprehensive medication database with intelligent search, detailed information, 
+                    and professional-grade insights for informed healthcare decisions.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollToSearch()">
+                        <i class="fas fa-search"></i>
+                        Start Searching
+                    </button>
+                    <button class="btn btn-secondary" onclick="openAboutModal()">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="medicine-animation">
+                    <div class="pill pill-1"></div>
+                    <div class="pill pill-2"></div>
+                    <div class="pill pill-3"></div>
+                    <div class="capsule capsule-1"></div>
+                    <div class="capsule capsule-2"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="search" class="search-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Medicine Search</h2>
+                <p>Find comprehensive information about any medication</p>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <div class="search-input-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="medicineSearch" placeholder="Enter medicine name (e.g., Paracetamol, Aspirin)">
+                        <button class="voice-search" id="voiceSearch" title="Voice Search">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+                
+                <div class="search-filters">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button class="btn btn-outline" id="advancedFilters">
+                        <i class="fas fa-filter"></i>
+                        Advanced Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div class="search-results" id="searchResults">
+                <div class="results-header">
+                    <h3 id="resultsCount">Search for medicines to see results</h3>
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="results-grid" id="resultsGrid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Database Section -->
+    <section id="database" class="database-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Medicine Database</h2>
+                <p>Explore our comprehensive collection of medications</p>
+            </div>
+            
+            <div class="database-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalMedicines">0</h3>
+                        <p>Total Medicines</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalCategories">0</h3>
+                        <p>Categories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>24/7</h3>
+                        <p>Available</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>100%</h3>
+                        <p>Verified</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="database-actions">
+                <button class="btn btn-primary" id="addMedicineBtn">
+                    <i class="fas fa-plus"></i>
+                    Add New Medicine
+                </button>
+                <button class="btn btn-outline" id="exportDataBtn">
+                    <i class="fas fa-download"></i>
+                    Export Database
+                </button>
+                <button class="btn btn-outline" id="importDataBtn">
+                    <i class="fas fa-upload"></i>
+                    Import Data
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Medicine Detail Modal -->
+    <div class="modal" id="medicineModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content medicine-detail-modal">
+            <div class="modal-header">
+                <h2 id="modalMedicineName">Medicine Details</h2>
+                <button class="modal-close" onclick="closeMedicineModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="medicine-detail-content">
+                    <div class="medicine-header">
+                        <div class="medicine-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div class="medicine-basic-info">
+                            <h3 id="detailMedicineName">Medicine Name</h3>
+                            <span class="medicine-category" id="detailMedicineCategory">Category</span>
+                        </div>
+                        <div class="medicine-actions">
+                            <button class="btn btn-sm btn-outline" onclick="shareMedicine()">
+                                <i class="fas fa-share"></i>
+                                Share
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="printMedicine()">
+                                <i class="fas fa-print"></i>
+                                Print
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="medicine-tabs">
+                        <div class="tab-nav">
+                            <button class="tab-btn active" data-tab="overview">Overview</button>
+                            <button class="tab-btn" data-tab="usage">Usage</button>
+                            <button class="tab-btn" data-tab="dosage">Dosage</button>
+                            <button class="tab-btn" data-tab="sideeffects">Side Effects</button>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="overview-tab">
+                                <div class="content-section">
+                                    <h4><i class="fas fa-info-circle"></i> Overview</h4>
+                                    <p id="medicineOverview">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="usage-tab">
+                                <div class="content-section">
+                                    <h4><i class="fas fa-prescription"></i> Usage Instructions</h4>
+                                    <p id="medicineUsage">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="dosage-tab">
+                                <div class="content-section">
+                                    <h4><i class="fas fa-calculator"></i> Dosage Information</h4>
+                                    <p id="medicineDosage">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="sideeffects-tab">
+                                <div class="content-section">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Side Effects</h4>
+                                    <p id="medicineSideEffects">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Medicine Modal -->
+    <div class="modal" id="addMedicineModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Medicine</h2>
+                <button class="modal-close" onclick="closeAddMedicineModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addMedicineForm" class="medicine-form">
+                    <div class="form-group">
+                        <label for="newMedicineName">Medicine Name *</label>
+                        <input type="text" id="newMedicineName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMedicineCategory">Category *</label>
+                        <select id="newMedicineCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Analgesic">Analgesic</option>
+                            <option value="Antibiotic">Antibiotic</option>
+                            <option value="Antiviral">Antiviral</option>
+                            <option value="Antifungal">Antifungal</option>
+                            <option value="Anti-inflammatory">Anti-inflammatory</option>
+                            <option value="Cardiovascular">Cardiovascular</option>
+                            <option value="Respiratory">Respiratory</option>
+                            <option value="Gastrointestinal">Gastrointestinal</option>
+                            <option value="Neurological">Neurological</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMedicineOverview">Overview *</label>
+                        <textarea id="newMedicineOverview" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMedicineUsage">Usage Instructions *</label>
+                        <textarea id="newMedicineUsage" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMedicineDosage">Dosage Information *</label>
+                        <textarea id="newMedicineDosage" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMedicineSideEffects">Side Effects *</label>
+                        <textarea id="newMedicineSideEffects" rows="3" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeAddMedicineModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Medicine
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>About MediSuggest</h2>
+                <button class="modal-close" onclick="closeAboutModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <div class="about-section">
+                        <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+                        <p>MediSuggest is designed to provide comprehensive, accurate, and accessible medication information to empower informed healthcare decisions. Our platform serves as a reliable reference tool for essential drug-related knowledge.</p>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3><i class="fas fa-star"></i> Key Features</h3>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-search"></i> Intelligent search with auto-suggestions</li>
+                            <li><i class="fas fa-filter"></i> Advanced filtering and categorization</li>
+                            <li><i class="fas fa-info-circle"></i> Detailed medication profiles</li>
+                            <li><i class="fas fa-plus"></i> Easy database expansion</li>
+                            <li><i class="fas fa-mobile-alt"></i> Responsive design for all devices</li>
+                            <li><i class="fas fa-microphone"></i> Voice search capability</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Important Disclaimer</h3>
+                        <div class="disclaimer">
+                            <p>This system is intended for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a licensed healthcare provider for any medical concerns or before starting any medication.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <span>MediSuggest</span>
+                    </div>
+                    <p>Advanced medicine recommendation system for informed healthcare decisions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#search">Search</a></li>
+                        <li><a href="#database">Database</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#" onclick="openAboutModal()">Help Center</a></li>
+                        <li><a href="#" onclick="showToast('Contact feature coming soon!', 'info')">Contact Us</a></li>
+                        <li><a href="#" onclick="showToast('Privacy policy coming soon!', 'info')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" onclick="showToast('Social links coming soon!', 'info')"><i class="fab fa-twitter"></i></a>
+                        <a href="#" onclick="showToast('Social links coming soon!', 'info')"><i class="fab fa-facebook"></i></a>
+                        <a href="#" onclick="showToast('Social links coming soon!', 'info')"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MediSuggest. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

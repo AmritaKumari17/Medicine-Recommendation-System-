@@ -1,0 +1,16 @@
+{
+  "name": "medisuggest",
+  "version": "1.0.0",
+  "description": "Advanced Medicine Recommendation System",
+  "main": "script.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'No build process needed for static files'"
+  },
+  "keywords": ["medicine", "healthcare", "recommendation", "database"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
