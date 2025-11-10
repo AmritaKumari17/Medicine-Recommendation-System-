@@ -143,29 +143,48 @@ function handleNavigation(e) {
 }
 
 // Load Medicine Data
+// Load Medicine Data from Excel file (medicine.xlsx)
 async function loadMedicineData() {
     try {
-        // Use sample data as primary source
-        medicineData = getSampleMedicineData();
-        
-        // Process and display data
+        const response = await fetch('medicine.xlsx');
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Parse Excel file
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const excelData = XLSX.utils.sheet_to_json(firstSheet);
+
+        // Assign data and process
+        medicineData = excelData.map(row => ({
+            Drug_Name: row.Drug_Name || row["Medicine Name"] || row.Name || "",
+            Category: row.Category || "Other",
+            Overview: row.Overview || row.Description || "",
+            Usage: row.Usage || row.Uses || "",
+            Dosage: row.Dosage || "",
+            Side_Effects: row.Side_Effects || row["Side Effects"] || ""
+        })).filter(med => med.Drug_Name.trim() !== "");
+
+        // Continue with rest of app logic
         processData();
         updateStats();
         populateCategoryFilter();
         displayAllMedicines();
-        
-        showToast('Sample database loaded. Upload your Excel file to add more medicines.', 'info');
+
+        showToast('Medicine data loaded from Excel successfully!', 'success');
     } catch (error) {
-        console.error('Error loading medicine data:', error);
+        console.error('Error loading Excel file:', error);
+
+        // Fallback to sample data if Excel fails
         medicineData = getSampleMedicineData();
         processData();
         updateStats();
         populateCategoryFilter();
         displayAllMedicines();
-        
-        showToast('Sample data loaded. Upload your Excel file for full database.', 'info');
+
+        showToast('Failed to load Excel file. Loaded sample data instead.', 'error');
     }
 }
+
 
 // Get Sample Medicine Data
 function getSampleMedicineData() {
